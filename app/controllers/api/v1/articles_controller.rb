@@ -5,10 +5,63 @@ module Api
       def index
         articles = Article.order('created_at DESC')
         render json: {status: 'SUCCESS', 
-                      message: 'Loaded Articles',
+                      message: 'Loaded Those MuthaFuckin Articles',
                       data:articles
                      },
                       status: :ok
+      end
+
+      def show
+        article = Article.find(params[:id])
+        render json: {staus: 'SUCCESS',
+                      message: 'Loaded Article',
+                      data:article},
+                      status: :ok
+      end
+
+      def create
+        article = Article.new(article_params)
+        if article.save
+          render json: {status: 'SUCCESS',
+                        message: 'Article Saved',
+                        data:article},
+                        status: :ok
+        else
+          render json: {status: 'ERROR',
+                        message: 'Article Did NOT Save',
+                        data:article.errors},
+                        status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        article = Article.find(params[:id])
+        article.destroy
+        render json: {status: 'SUCCESS', 
+                      message:'Deleted article', 
+                      data:article},
+                      status: :ok
+      end
+
+      def update
+        article = Article.find(params[:id])
+        if article.update_attributes(article_params)
+          render json: {status: 'SUCCESS', 
+                        message:'Updated article', 
+                        data:article},
+                        status: :ok
+        else
+          render json: {status: 'ERROR', 
+                        message:'Article not updated', 
+                        data:article.errors},
+                        status: :unprocessable_entity
+        end
+      end
+
+      private
+
+      def article_params
+        params.permit(:title, :body)
       end
 
     end
